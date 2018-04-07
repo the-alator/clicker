@@ -1,17 +1,17 @@
-var canvas = document.getElementById("mainCanv");
-var draw = canvas.getContext("2d");
-var horizontalPagePart = document.documentElement.clientWidth/8;
-var verticalPagePart = document.documentElement.clientHeight/20;
+let canvas = document.getElementById("mainCanv");
+let draw = canvas.getContext("2d");
+let horizontalPagePart = document.documentElement.clientWidth/8;
+let verticalPagePart = document.documentElement.clientHeight/20;
 
-var elementActions = [];
-var colors = ["#02440c", "#e4d565", "#40becd", "#f3f5e7", "#f891a0", "#a0a50d", "#564726", "#fecf67", "#d2b3b7", "#2f5c33", "#f46500", "#8B4513",
+let elementActions = [];
+let colors = ["#02440c", "#e4d565", "#40becd", "#f3f5e7", "#f891a0", "#a0a50d", "#564726", "#fecf67", "#d2b3b7", "#2f5c33", "#f46500", "#8B4513",
               "#a20417", "#FFD000", "#37FF00", "#00FFFF", "#0040FF", "#A754FF", "#FF00BB", "#FF0000", "#000000", "#ffffff", "#FFFFF0", "#008080"];
 
-var elements = [];
+let elements = [];
 
 ////////////////////
 
-var testActionsArrival = 0;
+// let testActionsArrival = 0;
 fillActions();
 createElements();
 
@@ -23,7 +23,7 @@ repaint();
 //////////////////////
 function repaint(){
     draw.clearRect(0,0,canvas.width,canvas.height);
-    for(var e of elements){
+    for(let e of elements){
         if(e != undefined)
             e.draw();
     }
@@ -32,7 +32,7 @@ function repaint(){
 
 function mouseClicked(event){
     if(event.x > horizontalPagePart && event.x < horizontalPagePart + canvas.width && event.y > verticalPagePart && event.y < verticalPagePart + canvas.height) {
-        for (var e of elements) {
+        for (let e of elements) {
             if(e != undefined)
                 e.onclick(event.x - horizontalPagePart, event.y - verticalPagePart);
         }
@@ -60,14 +60,14 @@ function Circle(i){
             console.log("action: " + this.action);
             elementActions[this.action](this);
         }
-    }
+    };
     this.draw = function(){
         draw.beginPath();
         draw.fillStyle = this.color;
         draw.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
         draw.fill();
         draw.closePath();
-    }
+    };
 }
 
 function Rectangle(i){
@@ -84,7 +84,7 @@ function Rectangle(i){
             console.log("action: " + this.action);
             elementActions[this.action](this);
         }
-    }
+    };
     this.draw = function(){
         draw.beginPath();
         draw.fillStyle = this.color;
@@ -94,8 +94,8 @@ function Rectangle(i){
 }
 
 function createElements(){
-    var maxElements = randInt(10,50);
-    for(var a = 0; a < maxElements; a++){
+    let maxElements = randInt(10,50);
+    for(let a = 0; a < maxElements; a++){
         switch (randInt(0, 2)){
             case 0:
                 elements[a] = new Circle(a);
@@ -111,50 +111,50 @@ function createElements(){
 function fillActions(){
     elementActions[0] = function(p){
         p.x += 5;
-    }
+    };
     elementActions[1] = function(p){
         p.x -= 5;
-    }
+    };
     elementActions[2] = function(p){
         p.y += 5;
-    }
+    };
     elementActions[3] = function(p){
         p.y -= 5;
-    }
+    };
     elementActions[4] = function(p){
         if(p.radius === undefined)
             p.width += 5;
         else
             p.radius += 5;
-    }
+    };
     elementActions[5] = function(p){
         if(p.radius === undefined)
             p.width -= 5;
         else
             p.radius -= 5;
-    }
+    };
     elementActions[6] = function(p){
         if(p.radius === undefined)
             p.height += 5;
         else
             p.radius += 5;
-    }
+    };
     elementActions[7] = function(p){
         if(p.radius === undefined)
             p.height -= 5;
         else
             p.radius -= 5;
-    }
+    };
 
     elementActions[10] = function(p){
         p.color = colors[randInt(0,colors.length)];
-    }
+    };
     elementActions[11] = function(){
         canvas.style.background = colors[randInt(0,colors.length)];
-    }
+    };
     elementActions[9] = function(p){
         elements[p.index] = undefined;
-    }
+    };
     elementActions[8] = function(p){
         if(p.radius !== undefined){
             p.x = randInt(0, canvas.width - p.width);
