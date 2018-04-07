@@ -9,16 +9,17 @@ let colors = ["#02440c", "#e4d565", "#40becd", "#f3f5e7", "#f891a0", "#a0a50d", 
 
 let elements = [];
 
+let score = 0;
 ////////////////////
 
-// let testActionsArrival = 0;
-fillActions();
-createElements();
+window.onload = function(){
+    fillActions();
+    createElements();
 
+    document.addEventListener("mousedown", mouseClicked);
 
-document.addEventListener("mousedown", mouseClicked);
-
-repaint();
+    repaint();
+}
 
 //////////////////////
 function repaint(){
@@ -27,6 +28,9 @@ function repaint(){
         if(e != undefined)
             e.draw();
     }
+    draw.fillStyle = "red";
+    draw.font = "20px Arial Black"
+    draw.fillText("Score: " + score, verticalPagePart, canvas.height - verticalPagePart);
 }
 
 
@@ -42,9 +46,9 @@ function mouseClicked(event){
 }
 
 function Element(){
-    console.log(elementActions.length);
     this.action = randInt(0,elementActions.length);
     this.color = colors[randInt(0,colors.length)];
+    this.scoreAdder = randInt(0,50) - 20;
 }
 
 function Circle(i){
@@ -59,14 +63,17 @@ function Circle(i){
         if(Math.sqrt(Math.pow((this.x - x),2) + Math.pow((this.y - y),2)) < this.radius) {
             console.log("action: " + this.action);
             elementActions[this.action](this);
+            score += this.scoreAdder;
         }
     };
     this.draw = function(){
-        draw.beginPath();
-        draw.fillStyle = this.color;
-        draw.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
-        draw.fill();
-        draw.closePath();
+        if(this.radius > 0) {
+            draw.beginPath();
+            draw.fillStyle = this.color;
+            draw.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            draw.fill();
+            draw.closePath();
+        }
     };
 }
 
@@ -83,27 +90,47 @@ function Rectangle(i){
         if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
             console.log("action: " + this.action);
             elementActions[this.action](this);
+            score += this.scoreAdder;
         }
     };
     this.draw = function(){
-        draw.beginPath();
-        draw.fillStyle = this.color;
-        draw.fillRect(this.x,this.y,this.width,this.height);
-        draw.closePath();
+        if(this.width > 0 && this.height > 0) {
+            draw.beginPath();
+            draw.fillStyle = this.color;
+            draw.fillRect(this.x, this.y, this.width, this.height);
+            draw.closePath();
+        }
+    }
+}
+
+function ImageRect(i) {
+    Rectangle.call(this,i);
+
+    this.img = new Image();
+    this.img.src = "image1.jpg";
+    this.img.onload = function(){
+        repaint();
+    }
+    this.draw = function(){
+        if(this.width > 0 && this.height > 0) {
+            draw.beginPath();
+            draw.drawImage(this.img, this.x, this.y, this.width, this.height);
+            draw.closePath();
+        }
     }
 }
 
 function createElements(){
     let maxElements = randInt(10,50);
     for(let a = 0; a < maxElements; a++){
-        switch (randInt(0, 2)){
-            case 0:
-                elements[a] = new Circle(a);
-                break;
-            case 1:
-                elements[a] = new Rectangle(a);
-                break;
-        }
+        let rand = randInt(0, 11)
+        if(rand < 5)
+            elements[a] = new Circle(a);
+        else if(rand < 10)
+            elements[a] = new Rectangle(a);
+        else
+            elements[a] = new ImageRect(a);
+
 
     }
 }
